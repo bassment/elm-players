@@ -8,3 +8,5 @@ import Players.State exposing (PlayerId, Player)
 type Action
   = FetchAllDone (List Player)
   | FetchAllFail Http.Error
+  | ShowPlayers
+  | ShowPlayer PlayerId

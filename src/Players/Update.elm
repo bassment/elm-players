@@ -1,5 +1,6 @@
 module Players.Update exposing (..)
 
+import Navigation
 import Players.Actions exposing (Action(..))
 import Players.State exposing (Player)
 
@@ -11,3 +12,9 @@ update action players =
 
     FetchAllFail error ->
       (players, Cmd.none)
+
+    ShowPlayers ->
+      (players, Navigation.newUrl "#players")
+
+    ShowPlayer id ->
+      (players, Navigation.newUrl ("#players/" ++ (toString id)))
