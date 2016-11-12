@@ -1,47 +1,33 @@
-import Html exposing (Html, div, text)
-import Html.App as App
+module Main exposing (..)
 
+import Navigation
+import State exposing (State, initialState)
+import Actions exposing (Action(..))
+import Update exposing (update)
+import View exposing (view)
+import Players.Commands exposing (fetchAll)
+import Routing exposing (Route)
 
 -- MAIN
 
 main : Program Never
 main =
-  App.program {
+  Navigation.program Routing.parser {
     init = init,
     view = view,
     update = update,
+    urlUpdate = urlUpdate,
     subscriptions = subscriptions
   }
 
--- STATE
 
-type alias State = String
-
-init : ( State, Cmd Action )
-init =
-  ( "Hello", Cmd.none )
-
-
--- ACTION TYPES
-
-type Action = NoOp
-
-
--- UPDATE
-
-update : Action -> State -> ( State, Cmd Action )
-update action state =
-  case action of
-    NoOp ->
-      ( state, Cmd.none )
-
-
--- VIEW
-
-view : State -> Html Action
-view state =
-  div []
-    [ text state ]
+init : Result String Route -> ( State, Cmd Action )
+init result =
+  let
+    currentRoute =
+      Routing.routeFromResult result
+  in
+    (initialState currentRoute, Cmd.map PlayerAction fetchAll)
 
 
 -- SUBSCRIPTIONS
@@ -49,3 +35,12 @@ view state =
 subscriptions : State -> Sub Action
 subscriptions state =
   Sub.none
+
+
+urlUpdate : Result String Route -> State -> (State, Cmd Action)
+urlUpdate result state =
+  let
+    currentRoute =
+      Routing.routeFromResult result
+  in
+    ({state | route = currentRoute}, Cmd.none)
